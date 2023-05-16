@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./SearchBar.css";
 import axios from "axios";
+import Result from "../Result/Result";
+// import Result from "../Result/Result";
 
 const SearchBar = () => {
   const url = "https://dummyjson.com/products/search?q";
@@ -57,6 +59,7 @@ const SearchBar = () => {
           </div>
         ))}
       </div>
+      {result && <Result {...result} />}
     </div>
   );
 };
