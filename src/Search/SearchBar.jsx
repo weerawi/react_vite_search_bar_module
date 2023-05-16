@@ -1,50 +1,56 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./SearchBar.css";
-import axios from "axios";
-import Result from "../Result/Result";
-// import Result from "../Result/Result";
+import { useDebounce } from "../Hooks/UseDebounce";
 
-const SearchBar = () => {
-  const url = "https://dummyjson.com/products/search?q";
-
+const SearchBar = ({ fetchData, setResult, suggestionKey }) => {
   const [value, setValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [hideSuggestions, setHideSuggestions] = useState(true);
-  const [result, setResult] = useState(null);
 
-  const findResult = (title) => {
-    setResult(suggestions.find((suggestion) => suggestion.title === title));
+  const findResult = (value) => {
+    setResult(
+      suggestions.find((suggestion) => suggestion[suggestionKey] === value)
+    );
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  useDebounce(
+    async () => {
       try {
-        const { data } = await axios.get(`${url}=${value}`);
-        setSuggestions(data.products);
+        const suggestions = await fetchData(value);
+
+        setSuggestions(suggestions || []);
       } catch (error) {
         console.log(error);
       }
-    };
+    },
+    1000,
+    [value]
+  );
 
-    fetchData();
-  }, [value]);
+  const handleFocus = () => {
+    setHideSuggestions(false);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setHideSuggestions(true);
+    }, 200);
+  };
+
+  const handleSearchInputChange = (e) => {
+    setValue(e.target.value);
+  };
 
   return (
     <div className="container">
       <input
-        type="text"
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        type="search"
         className="textbox"
         value={value}
         placeholder="Search..."
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
-        onFocus={() => setHideSuggestions(false)}
-        onBlur={async () => {
-          setTimeout(() => {
-            setHideSuggestions(true);
-          }, 200);
-        }}
+        onChange={handleSearchInputChange}
       ></input>
 
       <div
@@ -53,13 +59,12 @@ const SearchBar = () => {
         {suggestions.map((suggestion) => (
           <div
             className="suggestion"
-            onClick={() => findResult(suggestion.title)}
+            onClick={() => findResult(suggestion[suggestionKey])}
           >
-            {suggestion["title"]}
+            {suggestion[suggestionKey]}
           </div>
         ))}
       </div>
-      {result && <Result {...result} />}
     </div>
   );
 };
