@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./SearchBar.css";
-import { useDebounce } from "../Hooks/UseDebounce";
+import { useDebounce } from "../../Hooks/UseDebounce";
 
 const SearchBar = ({ fetchData, setResult, suggestionKey }) => {
   const [value, setValue] = useState("");
