@@ -7,20 +7,21 @@ const Result = (props) => {
   return (
     <div>
       {keys.map((key) => (
-        <div>
-          <span>
-            {key.charAt(0) + key.slice(1)}:{props[key]}
-          </span>
-          {/* <Product
-            key={i}
-            title={props.title}
-            price={props.price}
-            description={description}
-            rating={props.rating}
-            category={props.category}
-          /> */}
-        </div>
+        <div>{`${key.charAt(0) + key.slice(1)}={${props[key]}}`}</div>
       ))}
+
+      {/* {keys?.map(({ title, description, price, rating, category }, index) => {
+        return (
+          <Product
+            key={index}
+            title={title}
+            price={price}
+            description={description}
+            rating={rating}
+            category={category}
+          />
+        );
+      })} */}
     </div>
   );
 };
